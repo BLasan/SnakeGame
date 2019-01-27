@@ -30,18 +30,13 @@ public class SoundPlayer extends Menu{
         boolean isOk=menu.getVariable();
         if(isOk)
 
-        soundPool.play(hit,1.0f,1.0f,1,0,3.0f);
+        soundPool.play(hit,1.0f,1.0f,1,0,1.0f);
     }
 
     public void attack(){
         boolean isOk=menu.getVariable();
         if(isOk)
-        soundPool.play(attack,1.0f,1.0f,1,0,3.0f);
+        soundPool.play(attack,1.0f,1.0f,1,0,1.0f);
     }
-    public void destroy(){
 
-        boolean isOk=menu.getVariable();
-        if(isOk)
-        soundPool.play(destroy,1.0f,1.0f,1,2,3.0f);
-    }
 }

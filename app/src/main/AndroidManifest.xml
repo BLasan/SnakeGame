@@ -7,12 +7,15 @@
         android:icon="@mipmap/snake"
         android:label="Snake Game"
         android:roundIcon="@mipmap/snake"
-
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-      <activity android:name=".SnakeEngine"
-          android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
-          android:screenOrientation="portrait" />
+        <activity android:name=".EndGame"
+           android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            />
+        <activity
+            android:name=".SnakeEngine"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" />
         <activity android:name=".Menu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

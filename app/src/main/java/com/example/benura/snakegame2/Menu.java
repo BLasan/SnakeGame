@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,12 +28,21 @@ public class Menu extends AppCompatActivity {
     public Bitmap bitmap;
     public Context context;
     public static boolean isClick=false,isClicks=false;
-    private SoundPlayer soundPlayer;
+    public boolean isPlay=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        soundPlayer=new SoundPlayer(Menu.this);
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+
+       // soundPlayer=new SoundPlayer(Menu.this);
+        final MediaPlayer mp2 = MediaPlayer.create(this, R.raw.destroyer);
+        if(!isPlay) {
+            mp2.start();
+            isPlay=true;
+        }
         progressBar=(ProgressBar)findViewById(R.id.progressBar2);
         button1 = (Button) findViewById(R.id.start);
         button1.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +59,8 @@ public class Menu extends AppCompatActivity {
                     public void onFinish() {
 
                         Intent i = new Intent(Menu.this, SnakeEngine.class);
+                        isPlay=false;
+                        mp2.stop();
                         finish();
                         startActivity(i);
                     }
@@ -61,6 +74,7 @@ public class Menu extends AppCompatActivity {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mp2.stop();
                 finishAffinity();
             }
         });
@@ -74,8 +88,10 @@ public class Menu extends AppCompatActivity {
                     isClick=true;
                     isClicks=false;
                     Toast.makeText(Menu.this,"Sound off",Toast.LENGTH_SHORT).show();
-                    AudioManager mgr = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-                    mgr.setStreamMute(AudioManager.STREAM_SYSTEM, false);
+                    if(isPlay) {
+                        mp2.pause();
+                        isPlay = false;
+                    }
 
                 }
 
@@ -83,7 +99,10 @@ public class Menu extends AppCompatActivity {
                     isClicks=true;
                     isClick=false;
                     Toast.makeText(Menu.this,"Sounnd on",Toast.LENGTH_SHORT).show();
-                    soundPlayer.destroy();
+                    if(!isPlay) {
+                        mp2.start();
+                        isPlay=true;
+                    }
 
                 }
 

@@ -1,38 +1,40 @@
 package com.example.benura.snakegame2;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.media.SoundPool;
-import android.os.Bundle;
-import android.view.Menu;
+
+import android.os.CountDownTimer;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.VelocityTracker;
+
+
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 public class SnakeEngines extends SurfaceView implements Runnable {
 
-    private VelocityTracker velocityTracker=null;
+    public VelocityTracker velocityTracker;
+    public Context context;
+    public Activity activity;
     private  Bitmap bmp;
     public SoundPlayer soundPlayer;
     private Thread thread = null;
 
-    private Context context;
-
-    private SoundPool soundPool;
-    private int eat_bob = -1;
-    private int snake_crash = -1;
     public enum Heading {UP, RIGHT, DOWN, LEFT}
 
     private Heading heading = Heading.RIGHT;
-
-
     private int screenX;
     private int screenY;
 
@@ -60,7 +62,7 @@ public class SnakeEngines extends SurfaceView implements Runnable {
     private volatile boolean isPlaying;
 
     private Canvas canvas;
-
+    public Timer timer=new Timer();
     private SurfaceHolder surfaceHolder;
     private int flag=0;
 
@@ -68,14 +70,16 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
     @Override
     public void run() {
-        
-        while (isPlaying) {
+
+      while (isPlaying) {
+
 
                 update();
                 draw();
 
         }
-    }
+
+        }
 
     public void pause() {
         isPlaying = false;
@@ -102,13 +106,15 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
         score = 0;
 
+
         nextFrameTime = System.currentTimeMillis();
     }
 
+
     public SnakeEngines(Context context, Point size) {
         super(context);
+        activity= (Activity) context;
         context = context;
-
         screenX = size.x;
         screenY = size.y;
         this.bmp = BitmapFactory.decodeResource(getResources(), R.drawable.ic_android);
@@ -207,10 +213,8 @@ public class SnakeEngines extends SurfaceView implements Runnable {
         moveSnake();
 
         if (detectDeath()) {
-            //start again
             soundPlayer.playhit();
-
-            newGame();
+            EndGame();
         }
 
     }
@@ -241,6 +245,7 @@ public class SnakeEngines extends SurfaceView implements Runnable {
            canvas.drawColor(Color.argb(255, 26, 182, 144));
 
            paint.setColor(Color.argb(255, 255, 255, 255));
+
 
 
            paint.setTextSize(90);
@@ -334,17 +339,13 @@ public class SnakeEngines extends SurfaceView implements Runnable {
         return true;
     }
 
+    public void EndGame(){
 
-    public void newGame1() {
-
-        snakeXs[0] = NUM_BLOCKS_WIDE / 2;
-        snakeYs[0] = numBlocksHigh / 2;
-
-        spawnBob();
+        Intent i = new Intent(activity, EndGame.class);
+        activity.finish();
+        activity.startActivity(i);
 
     }
-
-
 
 }
 
