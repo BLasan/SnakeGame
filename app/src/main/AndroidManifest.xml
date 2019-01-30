@@ -9,9 +9,11 @@
         android:roundIcon="@mipmap/snake"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EndGame"
-           android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            />
+        <activity android:name=".DisplayAbout"></activity>
+        <activity android:name=".DisplayScore" />
+        <activity
+            android:name=".EndGame"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".SnakeEngine"
             android:screenOrientation="portrait"

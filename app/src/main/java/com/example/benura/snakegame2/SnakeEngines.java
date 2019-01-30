@@ -9,23 +9,20 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-
+import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.VelocityTracker;
-
+import android.widget.Toast;
 
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+
 
 public class SnakeEngines extends SurfaceView implements Runnable {
 
-    public VelocityTracker velocityTracker;
+    public int snakey,snakex;
+    public static boolean news=false;
     public Context context;
     public Activity activity;
     private  Bitmap bmp;
@@ -54,7 +51,7 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
     private final long MILLIS_PER_SECOND = 1000;
 
-    private int score;
+    private static int score,score2;
 
     private int[] snakeXs;
     private int[] snakeYs;
@@ -62,7 +59,6 @@ public class SnakeEngines extends SurfaceView implements Runnable {
     private volatile boolean isPlaying;
 
     private Canvas canvas;
-    public Timer timer=new Timer();
     private SurfaceHolder surfaceHolder;
     private int flag=0;
 
@@ -73,9 +69,12 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
       while (isPlaying) {
 
-
+               if(updateRequired())
                 update();
                 draw();
+
+                if(score==1000)
+                    EndGame();
 
         }
 
@@ -99,10 +98,10 @@ public class SnakeEngines extends SurfaceView implements Runnable {
     public void newGame() {
         // Start with a single snake segment
         snakeLength = 1;
-        snakeXs[0] = NUM_BLOCKS_WIDE / 2;
+        snakeXs[0] = 0;
         snakeYs[0] = numBlocksHigh / 2;
 
-       spawnBob();
+        spawnBob();
 
         score = 0;
 
@@ -138,7 +137,6 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
         });
 
-
         blockSize = screenX / NUM_BLOCKS_WIDE;
 
         numBlocksHigh = screenY / blockSize;
@@ -156,15 +154,21 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
 
     public void spawnBob() {
-        Random random = new Random();
-        bobX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
-        bobY = random.nextInt(numBlocksHigh - 1) + 1;
+
+            Random random = new Random();
+            bobX = random.nextInt(NUM_BLOCKS_WIDE - 1) + 1;
+            bobY = random.nextInt(numBlocksHigh - 1) + 1;
+
     }
 
     private void eatBob(){
 
         soundPlayer.attack();
-        snakeLength++;
+        if(score%70==0&&score!=0)
+        snakeLength=snakeLength+2;
+
+        else
+            snakeLength++;
 
         spawnBob();
 
@@ -178,6 +182,7 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
     private void moveSnake(){
         // Move the body
+
         for (int i = snakeLength; i > 0; i--) {
             snakeXs[i] = snakeXs[i - 1];
             snakeYs[i] = snakeYs[i - 1];
@@ -187,25 +192,29 @@ public class SnakeEngines extends SurfaceView implements Runnable {
         switch (heading) {
             case UP:
                 snakeYs[0]--;
+                snakey=snakeYs[0];
                 break;
 
             case RIGHT:
                 snakeXs[0]++;
+                snakex=snakeXs[0];
                 break;
 
             case DOWN:
                 snakeYs[0]++;
+                snakey=snakeYs[0];
                 break;
 
             case LEFT:
                 snakeXs[0]--;
+                snakex=snakeXs[0];
                 break;
         }
     }
 
     public void update() {
         // Did the head of the snake eat Bob?
-        if (snakeXs[0] == bobX-1 && snakeYs[0] == bobY-1) {
+        if (snakeXs[0] == bobX && snakeYs[0] == bobY) {
             eatBob();
         }
 
@@ -215,6 +224,13 @@ public class SnakeEngines extends SurfaceView implements Runnable {
         if (detectDeath()) {
             soundPlayer.playhit();
             EndGame();
+            //newGame();
+        }
+
+       else if(news) {
+            newGame1();
+           // EndGame();
+            news = false;
         }
 
     }
@@ -223,10 +239,10 @@ public class SnakeEngines extends SurfaceView implements Runnable {
         // Has the snake died?
         boolean dead = false;
 
-        if (snakeXs[0] == -1) dead = true;
-        if (snakeXs[0] >= NUM_BLOCKS_WIDE) dead = true;
-        if (snakeYs[0] == -1) dead = true;
-        if (snakeYs[0] == numBlocksHigh) dead = true;
+        if (snakeXs[0] == -1) news = true;
+        if (snakeXs[0] >= NUM_BLOCKS_WIDE) news = true;
+        if (snakeYs[0] == -1) news = true;
+        if (snakeYs[0] == numBlocksHigh) news = true;
 
         for (int i = snakeLength - 1; i > 0; i--) {
             if ((i > 4) && (snakeXs[0] == snakeXs[i]) && (snakeYs[0] == snakeYs[i])) {
@@ -249,7 +265,8 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
 
            paint.setTextSize(90);
-           canvas.drawText("Score:" + score, 10, 70, paint);
+           canvas.drawText("Score:" + score, 20, 70, paint);
+
 
            for (int i = 0; i < snakeLength; i++) {
                canvas.drawRect(snakeXs[i] * blockSize,
@@ -262,12 +279,12 @@ public class SnakeEngines extends SurfaceView implements Runnable {
            // Set the color of the paint to draw Bob red
            paint.setColor(Color.argb(255, 255, 25, 25));
 
-           if(score==0||score%20!=0) {
+           if(score==0||score%70!=0) {
                canvas.drawCircle(bobX * blockSize, bobY * blockSize, blockSize / 2, paint);
                flag=0;
            }
 
-           else if(score%20==0&&score!=0) {
+           else if(score%70==0&&score!=0) {
 
                canvas.drawCircle(bobX * blockSize, bobY * blockSize, blockSize, paint);
 
@@ -288,7 +305,7 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
     public boolean updateRequired() {
 
-        // Are we due to update the frame
+
         if(nextFrameTime <= System.currentTimeMillis()){
 
             nextFrameTime =System.currentTimeMillis() + MILLIS_PER_SECOND / FPS;
@@ -341,11 +358,44 @@ public class SnakeEngines extends SurfaceView implements Runnable {
 
     public void EndGame(){
 
-        Intent i = new Intent(activity, EndGame.class);
+       Intent i = new Intent(activity, EndGame.class);
+       Bundle bundle=new Bundle();
+       bundle.putInt("score",score);
+       i.putExtras(bundle);
         activity.finish();
         activity.startActivity(i);
 
     }
+
+    public void newGame1() {
+        // Start with a single snake segment
+        if(snakeXs[0]>=NUM_BLOCKS_WIDE) {
+            snakeXs[0] = 0;
+            snakeYs[0] =snakey;
+        }
+
+        else if(snakeXs[0]==-1){
+
+            snakeXs[0] = NUM_BLOCKS_WIDE;
+            snakeYs[0] = snakey;
+
+        }
+
+        else if(snakeYs[0]>=numBlocksHigh){
+
+            snakeXs[0] = snakex;
+            snakeYs[0] =0;
+        }
+
+        else if(snakeYs[0]==-1){
+
+            snakeXs[0] = snakex;
+            snakeYs[0] =numBlocksHigh;
+
+        }
+        nextFrameTime = System.currentTimeMillis();
+    }
+
 
 }
 

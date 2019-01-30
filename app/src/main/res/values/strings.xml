@@ -4,4 +4,9 @@
     <string name="title_activity_endgame">Endgame</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_displayabout">DisplayAbout</string>
+    <string name="action_settings">Settings</string>
+    <string name="Multiline_Text_By_N">This is a simple snake game. The player has to move the snake witout
+        hitting itself.\n Every score which equals to the multiplication of 70,a bigger egg will be spawned.
+        \n By eating this big egg player will be awarded 30 score otherwise he/she will be awarded 10 points only.</string>
 </resources>
