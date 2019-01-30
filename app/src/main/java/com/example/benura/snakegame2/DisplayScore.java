@@ -31,7 +31,7 @@ public class DisplayScore extends AppCompatActivity{
             //Loop through the table rows
             max=cursor.getInt(1);
             do {
-                if(cursor.getInt(1)>max) {
+                if(cursor.getInt(1)>=max) {
                     max = cursor.getInt(1);
                     names=cursor.getString(0);
                 }
