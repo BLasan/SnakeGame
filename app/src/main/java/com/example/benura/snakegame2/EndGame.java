@@ -133,7 +133,17 @@ public class EndGame extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        //   boolean fromNewActivity=true;
+        Intent mainIntent = new Intent(EndGame.this, Menu.class);
+        startActivityForResult(mainIntent, 0);
 
     }
+
+
+
 
 }

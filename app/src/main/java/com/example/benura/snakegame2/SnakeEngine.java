@@ -6,18 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
+import android.widget.Toast;
 
 
 public class SnakeEngine extends Activity {
-
+    public  static boolean isBack=false;
     public boolean isPause=false;
+    public  Button button1;
+    public  Display display;
+    public Point size;
     SnakeEngines snakeEngine;
     FrameLayout game;
     RelativeLayout GameButtons;//Holder for the buttons
@@ -26,17 +30,17 @@ public class SnakeEngine extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_snake_engine);
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
+        display = getWindowManager().getDefaultDisplay();
+        size = new Point();
         display.getSize(size);
        snakeEngine=new SnakeEngines(SnakeEngine.this,size);
        game=new FrameLayout(this);
        GameButtons=new RelativeLayout(this);
        final Button button=new Button(this);
-       final Button button1=new Button(this);
+       button1=new Button(this);
        button1.setText("PAUSE");
        button1.setId(1235);
-       button.setText("BACK");
+       button.setText("QUIT");
        button.setId(1234);
         RelativeLayout.LayoutParams params1=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
        RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -79,6 +83,7 @@ public class SnakeEngine extends Activity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(SnakeEngine.this, Menu.class);
+                isBack=false;
                 finish();
                 startActivity(i);
             }
@@ -99,6 +104,53 @@ public class SnakeEngine extends Activity {
         super.onPause();
         snakeEngine.pause();
     }
+
+    @Override
+    public void onBackPressed() {
+        //   boolean fromNewActivity=true;
+        button1.setText("RESUME");
+       // onPause();
+        isBack=true;
+        Intent mainIntent = new Intent(SnakeEngine.this, Menu.class);
+       // mainIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+        startActivityForResult(mainIntent, 0);
+        new CountDownTimer(3000,1000){
+
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            public void onFinish() {
+
+                button1.setText("PAUSE");
+            }
+
+        }.start();
+
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle bundle){
+
+        super.onRestoreInstanceState(bundle);
+        String state=bundle.getString("saved");
+        if(state==null){
+
+        }
+
+        else
+            Toast.makeText(SnakeEngine.this,"Done",Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle save) {
+
+        super.onSaveInstanceState(save);
+
+    }
+
 
 
 }

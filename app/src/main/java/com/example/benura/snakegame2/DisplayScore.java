@@ -59,5 +59,13 @@ public class DisplayScore extends AppCompatActivity{
 
     }
 
+    @Override
+    public void onBackPressed() {
+        //   boolean fromNewActivity=true;
+        Intent mainIntent = new Intent(DisplayScore.this, Menu.class);
+        startActivityForResult(mainIntent, 0);
+
+    }
+
     }
 

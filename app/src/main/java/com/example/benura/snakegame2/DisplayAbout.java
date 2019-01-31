@@ -24,4 +24,14 @@ public class DisplayAbout extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        //   boolean fromNewActivity=true;
+        Intent mainIntent = new Intent(DisplayAbout.this, Menu.class);
+        startActivityForResult(mainIntent, 0);
+
+    }
+
+
 }

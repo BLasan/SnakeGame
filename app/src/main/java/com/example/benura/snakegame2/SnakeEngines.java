@@ -9,8 +9,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.renderscript.ScriptGroup;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -27,7 +29,7 @@ public class SnakeEngines extends SurfaceView implements Runnable {
     public Activity activity;
     private  Bitmap bmp;
     public SoundPlayer soundPlayer;
-    private Thread thread = null;
+    public static Thread thread = null;
 
     public enum Heading {UP, RIGHT, DOWN, LEFT}
 
@@ -56,7 +58,7 @@ public class SnakeEngines extends SurfaceView implements Runnable {
     private int[] snakeXs;
     private int[] snakeYs;
 
-    private volatile boolean isPlaying;
+    public volatile boolean isPlaying;
 
     private Canvas canvas;
     private SurfaceHolder surfaceHolder;
